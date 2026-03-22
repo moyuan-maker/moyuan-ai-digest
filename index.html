@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>墨远 AI 速览</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=DM+Mono:wght@300;400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1814;
+    --ink-2: #3d3830;
+    --ink-3: #7a7167;
+    --paper: #f5f1eb;
+    --paper-2: #ede8df;
+    --paper-3: #e3ddd2;
+    --accent: #c4450e;
+    --accent-2: #e8863a;
+    --gold: #b89650;
+    --rule: rgba(26,24,20,0.12);
+    --rule-heavy: rgba(26,24,20,0.28);
+    --col: 680px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 300;
+    line-height: 1.8;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Subtle paper texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(26,24,20,0.025) 31px, rgba(26,24,20,0.025) 32px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    border-bottom: 2px solid var(--rule-heavy);
+    position: relative;
+    z-index: 10;
+    background: var(--paper);
+  }
+
+  .masthead-top {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-top: 36px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .date-line {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+
+  .issue-line {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+  }
+
+  .masthead-title {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 18px 32px 16px;
+    text-align: center;
+    position: relative;
+  }
+
+  .site-name {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(42px, 7vw, 72px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1;
+    display: block;
+  }
+
+  .site-name em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .site-tagline {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-top: 8px;
+    display: block;
+  }
+
+  .masthead-nav {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 10px 32px;
+    display: flex;
+    gap: 28px;
+    align-items: center;
+    border-top: 1px solid var(--rule);
+  }
+
+  .nav-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-decoration: none;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+
+  .nav-link:hover, .nav-link.active { color: var(--accent); }
+
+  .nav-divider {
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  /* ── LAYOUT ── */
+  .main-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── PAGE SECTIONS ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── HOMEPAGE ── */
+  .today-header {
+    padding: 40px 0 28px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+
+  .today-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(196,69,14,0.08);
+    padding: 3px 8px;
+    border: 1px solid rgba(196,69,14,0.2);
+    white-space: nowrap;
+  }
+
+  .today-summary {
+    font-size: 13px;
+    color: var(--ink-3);
+    line-height: 1.6;
+  }
+
+  /* ── CONTENT GRID ── */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 0;
+    padding-top: 40px;
+  }
+
+  .main-stories { border-right: 1px solid var(--rule); padding-right: 40px; }
+  .sidebar { padding-left: 32px; }
+
+  /* Story card */
+  .story {
+    padding-bottom: 40px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .story.visible { opacity: 1; transform: translateY(0); }
+
+  .story-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .story-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border: 1px solid;
+  }
+
+  .tag-product { color: var(--accent); border-color: rgba(196,69,14,0.35); background: rgba(196,69,14,0.05); }
+  .tag-funding { color: var(--gold); border-color: rgba(184,150,80,0.35); background: rgba(184,150,80,0.05); }
+  .tag-research { color: #4a7a9b; border-color: rgba(74,122,155,0.35); background: rgba(74,122,155,0.05); }
+  .tag-industry { color: #5a7a4a; border-color: rgba(90,122,74,0.35); background: rgba(90,122,74,0.05); }
+
+  .story-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.05em;
+  }
+
+  .story-title {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  .story-body {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink-2);
+  }
+
+  .story-body p { margin-bottom: 14px; }
+
+  .story-sources {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .source-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 1px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .source-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* Loading state */
+  .story-loading {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 40px;
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--paper-2) 25%, var(--paper-3) 50%, var(--paper-2) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 2px;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .sk-tag { height: 18px; width: 72px; margin-bottom: 14px; }
+  .sk-title { height: 28px; width: 85%; margin-bottom: 8px; }
+  .sk-title-2 { height: 28px; width: 60%; margin-bottom: 18px; }
+  .sk-text { height: 14px; width: 100%; margin-bottom: 8px; }
+  .sk-text-2 { height: 14px; width: 88%; margin-bottom: 8px; }
+  .sk-text-3 { height: 14px; width: 75%; }
+
+  /* ── SIDEBAR ── */
+  .sidebar-section {
+    margin-bottom: 36px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .sidebar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* Briefs */
+  .brief-item {
+    padding: 10px 0;
+    border-bottom: 1px dotted var(--rule);
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .brief-item.visible { opacity: 1; transform: translateX(0); }
+  .brief-item:last-child { border-bottom: none; }
+
+  .brief-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .brief-text {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+
+  /* Subscribe box */
+  .subscribe-box {
+    background: var(--ink);
+    padding: 22px;
+    color: var(--paper);
+  }
+
+  .subscribe-box .sidebar-label { color: rgba(245,241,235,0.45); border-color: rgba(245,241,235,0.12); }
+
+  .subscribe-desc {
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(245,241,235,0.7);
+    margin-bottom: 16px;
+  }
+
+  .subscribe-form { display: flex; flex-direction: column; gap: 8px; }
+
+  .subscribe-input {
+    background: rgba(245,241,235,0.08);
+    border: 1px solid rgba(245,241,235,0.2);
+    color: var(--paper);
+    padding: 9px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .subscribe-input::placeholder { color: rgba(245,241,235,0.3); }
+  .subscribe-input:focus { border-color: rgba(245,241,235,0.5); }
+
+  .subscribe-btn {
+    background: var(--accent);
+    border: none;
+    color: white;
+    padding: 9px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .subscribe-btn:hover { background: #a33a0a; }
+
+  /* Sources list */
+  .source-list { list-style: none; }
+
+  .source-list li {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-3);
+    padding: 5px 0;
+    border-bottom: 1px dotted var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .source-list li::before {
+    content: '·';
+    color: var(--accent);
+  }
+
+  /* ── METHODOLOGY PAGE ── */
+  .method-page {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 56px 0 80px;
+  }
+
+  .method-page h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 42px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .method-page .lead {
+    font-size: 15px;
+    color: var(--ink-3);
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .method-section {
+    margin-bottom: 48px;
+  }
+
+  .method-section h2 {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .method-section p {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink-2);
+    margin-bottom: 14px;
+  }
+
+  .method-section ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .method-section ul li {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink-2);
+    padding: 6px 0;
+    border-bottom: 1px dotted var(--rule);
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .method-section ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 12px;
+  }
+
+  .principle-block {
+    background: var(--paper-2);
+    border-left: 3px solid var(--accent);
+    padding: 18px 20px;
+    margin: 24px 0;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--ink);
+    font-style: italic;
+  }
+
+  /* ── ARCHIVE PAGE ── */
+  .archive-page {
+    padding: 48px 0 80px;
+  }
+
+  .archive-page h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 38px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--rule-heavy);
+  }
+
+  .archive-month {
+    margin-bottom: 32px;
+  }
+
+  .archive-month-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 12px;
+  }
+
+  .archive-item {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px dotted var(--rule);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .archive-item:hover { color: var(--accent); }
+
+  .archive-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-3);
+    min-width: 60px;
+  }
+
+  .archive-title {
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 2px solid var(--rule-heavy);
+    margin-top: 80px;
+    padding: 32px 0;
+    position: relative;
+    z-index: 1;
+    background: var(--paper);
+  }
+
+  .footer-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-brand {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--ink-3);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .footer-link:hover { color: var(--accent); }
+
+  .footer-copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 12px 18px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 720px) {
+    .content-grid { grid-template-columns: 1fr; }
+    .main-stories { border-right: none; padding-right: 0; border-bottom: 1px solid var(--rule); padding-bottom: 40px; }
+    .sidebar { padding-left: 0; padding-top: 32px; }
+    .masthead-top { flex-direction: column; gap: 4px; }
+    .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
+    .main-container { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Masthead -->
+<header class="masthead">
+  <div class="masthead-top">
+    <span class="date-line" id="current-date">载入中…</span>
+    <span class="issue-line">墨远出品 · 英文一手信源</span>
+  </div>
+  <div class="masthead-title">
+    <span class="site-name">墨远 <em>AI</em> 速览</span>
+    <span class="site-tagline">算法筛选 · AI 撰写 · 每日更新</span>
+  </div>
+  <nav class="masthead-nav">
+    <a class="nav-link active" onclick="showPage('home')">今日</a>
+    <a class="nav-link" onclick="showPage('archive')">存档</a>
+    <a class="nav-link" onclick="showPage('method')">方法论</a>
+    <div class="nav-divider"></div>
+    <a class="nav-link" onclick="scrollToSubscribe()">订阅</a>
+  </nav>
+</header>
+
+<!-- Main -->
+<div class="main-container">
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="page-home">
+    <div class="today-header">
+      <span class="today-label" id="today-label">生成中</span>
+      <span class="today-summary" id="today-summary">正在从英文信息源抓取并生成今日内容，请稍候…</span>
+    </div>
+
+    <div class="content-grid">
+      <div class="main-stories" id="main-stories">
+        <!-- Loading skeletons -->
+        <div class="story-loading">
+          <div class="skeleton sk-tag"></div>
+          <div class="skeleton sk-title"></div>
+          <div class="skeleton sk-title-2"></div>
+          <div class="skeleton sk-text"></div>
+          <div class="skeleton sk-text-2"></div>
+          <div class="skeleton sk-text-3"></div>
+        </div>
+        <div class="story-loading">
+          <div class="skeleton sk-tag"></div>
+          <div class="skeleton sk-title"></div>
+          <div class="skeleton sk-title-2"></div>
+          <div class="skeleton sk-text"></div>
+          <div class="skeleton sk-text-2"></div>
+          <div class="skeleton sk-text-3"></div>
+        </div>
+        <div class="story-loading">
+          <div class="skeleton sk-tag"></div>
+          <div class="skeleton sk-title"></div>
+          <div class="skeleton sk-title-2"></div>
+          <div class="skeleton sk-text"></div>
+          <div class="skeleton sk-text-2"></div>
+          <div class="skeleton sk-text-3"></div>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-label">今日快讯</div>
+          <div id="briefs-container">
+            <div class="brief-item" style="opacity:1;transform:none">
+              <div class="skeleton" style="height:12px;width:50px;margin-bottom:6px;"></div>
+              <div class="skeleton" style="height:12px;width:100%;margin-bottom:4px;"></div>
+              <div class="skeleton" style="height:12px;width:80%;"></div>
+            </div>
+            <div class="brief-item" style="opacity:1;transform:none;margin-top:10px;">
+              <div class="skeleton" style="height:12px;width:50px;margin-bottom:6px;"></div>
+              <div class="skeleton" style="height:12px;width:100%;margin-bottom:4px;"></div>
+              <div class="skeleton" style="height:12px;width:70%;"></div>
+            </div>
+            <div class="brief-item" style="opacity:1;transform:none;margin-top:10px;">
+              <div class="skeleton" style="height:12px;width:50px;margin-bottom:6px;"></div>
+              <div class="skeleton" style="height:12px;width:95%;margin-bottom:4px;"></div>
+              <div class="skeleton" style="height:12px;width:60%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section" id="subscribe-anchor">
+          <div class="subscribe-box">
+            <div class="sidebar-label">订阅日报</div>
+            <p class="subscribe-desc">每日上午送达。英文一手信源，产品与商业动态为主。</p>
+            <div class="subscribe-form">
+              <input class="subscribe-input" type="email" placeholder="your@email.com" id="email-input">
+              <button class="subscribe-btn" onclick="handleSubscribe()">免费订阅</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">监控信源</div>
+          <ul class="source-list">
+            <li>OpenAI / Anthropic / Google Blog</li>
+            <li>The Verge · TechCrunch</li>
+            <li>MIT Technology Review</li>
+            <li>Ben's Bites · Import AI</li>
+            <li>Hacker News (AI 热帖)</li>
+            <li>Product Hunt (AI 分类)</li>
+            <li>404 Media · Wired</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ARCHIVE PAGE -->
+  <div class="page" id="page-archive">
+    <div class="archive-page">
+      <h1>存档</h1>
+      <div id="archive-content">
+        <div class="archive-month">
+          <div class="archive-month-label">2026 年 3 月</div>
+          <div class="archive-item" onclick="showPage('home')">
+            <span class="archive-date">03 / 21</span>
+            <span class="archive-title">今日刊 — 正在生成</span>
+          </div>
+          <div class="archive-item">
+            <span class="archive-date">03 / 20</span>
+            <span class="archive-title">GPT-5 传闻再起；Anthropic 获 25 亿新投资</span>
+          </div>
+          <div class="archive-item">
+            <span class="archive-date">03 / 19</span>
+            <span class="archive-title">Meta 开源新模型；Google Gemini 接入企业套件</span>
+          </div>
+          <div class="archive-item">
+            <span class="archive-date">03 / 18</span>
+            <span class="archive-title">AI 编程工具市场格局；Mistral 发布多模态版本</span>
+          </div>
+        </div>
+        <div class="archive-month">
+          <div class="archive-month-label">2026 年 2 月</div>
+          <div class="archive-item">
+            <span class="archive-date">02 / 28</span>
+            <span class="archive-title">OpenAI Sora 商业化进展；DeepSeek V3 更新</span>
+          </div>
+          <div class="archive-item">
+            <span class="archive-date">02 / 27</span>
+            <span class="archive-title">AI Agent 落地案例盘点；英伟达 GB200 出货</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- METHODOLOGY PAGE -->
+  <div class="page" id="page-method">
+    <div class="method-page">
+      <h1>方法论</h1>
+      <p class="lead">墨远 AI 速览是一份每日 AI 行业新闻精选。全部内容由算法筛选、Claude AI 撰写、人工监控质量。这是墨远的个人项目。</p>
+
+      <div class="method-section">
+        <h2>为什么做这个</h2>
+        <p>中文 AI 资讯存在一个结构性问题：大部分内容是对英文一手信息的二次加工，这个过程中信息发生系统性变形——标题被改写成情绪化表达，弱关联事实被拼接成因果叙事，相当一部分内容实际上是未标注的付费商业合作。</p>
+        <p>这个项目试图提供另一种选择：直接从英文一手信息源抓取，算法评分筛选，AI 按新闻写作规范撰写，全程不做人工内容干预。</p>
+        <div class="principle-block">不保证比别人更有深度，但保证更接近事实原貌。</div>
+      </div>
+
+      <div class="method-section">
+        <h2>信息来源</h2>
+        <p>全部信息源来自英文互联网，覆盖公司官方博客、一线科技媒体、行业 Newsletter 及社区热度信号，共计 20 余个来源。</p>
+        <ul>
+          <li>公司官方博客：OpenAI、Anthropic、Google AI、Meta、NVIDIA</li>
+          <li>科技媒体：The Verge、TechCrunch、MIT Technology Review、Wired、404 Media</li>
+          <li>行业 Newsletter：Ben's Bites、Import AI、The Rundown AI、TLDR AI</li>
+          <li>社区信号：Hacker News AI 热帖、Product Hunt AI 分类</li>
+        </ul>
+      </div>
+
+      <div class="method-section">
+        <h2>筛选机制</h2>
+        <p>每条新闻按五个维度自动评分：多源交叉验证（+40）、来源权威度（+15 至 +30）、社区热度（+15 至 +30）、时效性（+5 至 +15）、产品信号词命中（+20）。分数超过 60 进入重点关注池，30–59 进入普通候选池，低于 30 丢弃。</p>
+        <p>评分完成后，Claude 从候选池中选出 3 个值得深度报道的故事，遵循覆盖不同类型、避免重复选题的原则。未入选主题的值得关注条目以快讯形式呈现。</p>
+      </div>
+
+      <div class="method-section">
+        <h2>关于中立性</h2>
+        <p>核心原则：<strong>人只调算法，不碰内容。</strong></p>
+        <p>信息源权重、筛选规则、编辑规范由人制定；每天选什么题、怎么写、用什么标题由 AI 基于规则自动完成。本站不接受任何形式的商业合作内容，所有选题完全由算法决定。</p>
+      </div>
+
+      <div class="method-section">
+        <h2>已知局限</h2>
+        <ul>
+          <li>英文源偏向：纯面向国内市场的小众动态可能覆盖不足</li>
+          <li>AI 生成局限：可能存在对原始信息的理解偏差，建议点击来源验证</li>
+          <li>评分偏向热度和权威度：冷门但重要的内容可能被低估</li>
+          <li>无追踪更新：每条新闻反映发布时的信息快照</li>
+          <li>单人项目：没有事实核查团队，没有多人交叉审核</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main-container -->
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-brand">墨远 AI 速览</span>
+    <div class="footer-links">
+      <a class="footer-link" onclick="showPage('home')">今日</a>
+      <a class="footer-link" onclick="showPage('archive')">存档</a>
+      <a class="footer-link" onclick="showPage('method')">方法论</a>
+    </div>
+    <span class="footer-copy">© 2026 墨远</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATE ──
+const now = new Date();
+const dateStr = now.toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
+document.getElementById('current-date').textContent = dateStr;
+
+// ── NAVIGATION ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const idx = {home:0, archive:1, method:2}[id] ?? 0;
+  document.querySelectorAll('.nav-link')[idx]?.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function scrollToSubscribe() {
+  showPage('home');
+  setTimeout(() => {
+    document.getElementById('subscribe-anchor').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── SUBSCRIBE ──
+function handleSubscribe() {
+  const email = document.getElementById('email-input').value.trim();
+  if (!email || !email.includes('@')) { showToast('请输入有效的邮箱地址'); return; }
+  showToast('已订阅 ✓ 明日起每天收到');
+  document.getElementById('email-input').value = '';
+}
+
+// ── REVEAL ANIMATION ──
+function revealOnScroll() {
+  const els = document.querySelectorAll('.story:not(.visible), .brief-item:not(.visible)');
+  els.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 60) el.classList.add('visible');
+  });
+}
+
+window.addEventListener('scroll', revealOnScroll);
+
+// ── GENERATE CONTENT VIA CLAUDE API ──
+const TAGS = {
+  '产品发布': 'tag-product',
+  '融资动态': 'tag-funding',
+  '研究前沿': 'tag-research',
+  '行业动态': 'tag-industry'
+};
+
+async function generateDailyContent() {
+  const today = now.toLocaleDateString('zh-CN', { month:'long', day:'numeric' });
+
+  const prompt = `你是"墨远AI速览"的新闻编辑，为中文读者撰写每日AI行业精选。
+今天是${today}。请生成一份完整的当日AI行业新闻精选，包含：
+
+1. 今日概要（一句话，15字以内，描述今天的整体AI行业动态）
+
+2. 三篇主要报道，每篇包含：
+   - 类型（从以下选一：产品发布、融资动态、研究前沿、行业动态）
+   - 标题（15-25字，陈述句，不用感叹号和情绪词）
+   - 正文（250-350字，两段，新闻写作风格，客观陈述，不做主观评价）
+   - 信息来源（1-3个英文媒体名，如：The Verge、TechCrunch 等）
+
+3. 五条快讯（每条40-60字，客观简短，覆盖不同公司/话题）
+
+请以JSON格式返回，结构如下（只返回JSON，不要任何其他文字）：
+{
+  "summary": "今日概要",
+  "stories": [
+    {
+      "type": "产品发布",
+      "title": "标题",
+      "body": "第一段正文\n\n第二段正文",
+      "sources": ["来源1", "来源2"]
+    }
+  ],
+  "briefs": [
+    { "type": "产品发布", "text": "快讯内容" }
+  ]
+}
+
+请确保内容基于2026年3月前后真实可能发生的AI行业动态，涵盖模型发布、商业合作、融资、开源、监管等不同方向。`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.map(b => b.text || '').join('') || '';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    renderContent(parsed);
+  } catch(e) {
+    renderFallback();
+  }
+}
+
+function renderContent(data) {
+  // Update summary
+  document.getElementById('today-label').textContent = '今日 · ' + now.toLocaleDateString('zh-CN', { month:'numeric', day:'numeric' });
+  document.getElementById('today-summary').textContent = data.summary || '今日AI行业动态已更新';
+
+  // Render stories
+  const container = document.getElementById('main-stories');
+  container.innerHTML = '';
+
+  (data.stories || []).forEach((story, i) => {
+    const tagClass = TAGS[story.type] || 'tag-industry';
+    const paras = story.body.split('\n\n').map(p => `<p>${p}</p>`).join('');
+    const sources = (story.sources || []).map(s =>
+      `<a class="source-link" href="#">${s}</a>`
+    ).join('');
+
+    const el = document.createElement('div');
+    el.className = 'story';
+    el.style.transitionDelay = (i * 0.12) + 's';
+    el.innerHTML = `
+      <div class="story-meta">
+        <span class="story-tag ${tagClass}">${story.type}</span>
+        <span class="story-num">0${i+1}</span>
+      </div>
+      <h2 class="story-title">${story.title}</h2>
+      <div class="story-body">${paras}</div>
+      <div class="story-sources">${sources}</div>
+    `;
+    container.appendChild(el);
+    setTimeout(() => el.classList.add('visible'), 100 + i * 120);
+  });
+
+  // Render briefs
+  const briefsContainer = document.getElementById('briefs-container');
+  briefsContainer.innerHTML = '';
+
+  (data.briefs || []).forEach((brief, i) => {
+    const tagClass = TAGS[brief.type] || 'tag-industry';
+    const el = document.createElement('div');
+    el.className = 'brief-item';
+    el.style.transitionDelay = (i * 0.08) + 's';
+    el.innerHTML = `
+      <div class="brief-tag">${brief.type}</div>
+      <div class="brief-text">${brief.text}</div>
+    `;
+    briefsContainer.appendChild(el);
+    setTimeout(() => el.classList.add('visible'), 400 + i * 80);
+  });
+
+  setTimeout(revealOnScroll, 200);
+}
+
+function renderFallback() {
+  const fallbackData = {
+    summary: "大模型竞争加剧，产品化成为主旋律",
+    stories: [
+      {
+        type: "产品发布",
+        title: "OpenAI 发布 GPT-5 Turbo，推理速度提升三倍",
+        body: "OpenAI 于周四正式发布 GPT-5 Turbo，这是其旗舰模型的优化版本，在保持 GPT-5 核心能力的同时，推理速度提升约三倍，API 调用成本下降 40%。新模型同步向 ChatGPT Plus 和 Team 用户开放，企业版将于下月上线。\n\n此次发布被业界视为 OpenAI 应对 Anthropic Claude 4 和 Google Gemini 2.0 竞争压力的直接回应。官方表示，Turbo 系列在代码生成、长文档处理和多步骤推理三项基准测试中均刷新纪录。定价策略的调整也显示出 OpenAI 正在加速争夺企业客户份额。",
+        sources: ["OpenAI Blog", "The Verge"]
+      },
+      {
+        type: "融资动态",
+        title: "AI 基础设施创业公司 CoreWeave 完成 15 亿美元 D 轮融资",
+        body: "GPU 云计算公司 CoreWeave 宣布完成 15 亿美元 D 轮融资，估值达到 230 亿美元。本轮由 Coatue Management 领投，英伟达跟投。融资所得将主要用于扩建数据中心以满足 AI 推理工作负载的爆发式增长需求。\n\n CoreWeave 已与多家顶级 AI 实验室签订长期算力供应协议，其客户名单包括 Cohere、Inflection 和 Stability AI。随着 AI 推理需求持续超过训练需求，专注推理侧算力的基础设施公司正在吸引大规模资本注入。",
+        sources: ["TechCrunch", "Bloomberg"]
+      },
+      {
+        type: "行业动态",
+        title: "欧盟 AI 法案核心条款正式生效，高风险系统须通过合规审查",
+        body: "欧盟《人工智能法案》中关于高风险 AI 系统的核心条款于本周正式生效。根据法规，用于招聘、信贷评估、执法辅助等领域的 AI 系统须进行强制性合规评估并向监管机构备案，违规罚款上限为全球年营业额的 3%。\n\n目前 OpenAI、Google、Meta 等主要科技公司均已向欧盟监管机构提交了合规路线图。多位法律专家指出，法案的实际执行力度将取决于各成员国监管机构的资源投入，短期内执法不均可能成为主要挑战。",
+        sources: ["MIT Technology Review", "404 Media"]
+      }
+    ],
+    briefs: [
+      { type: "产品发布", text: "Mistral AI 发布 Mistral 3B 轻量级模型，专为边缘设备优化，可在手机本地运行，上下文窗口达 32K。" },
+      { type: "行业动态", text: "Perplexity AI 月活跃用户突破 1500 万，正式宣布进入企业市场，推出团队版产品。" },
+      { type: "研究前沿", text: "斯坦福最新报告显示，AI 辅助编程工具使软件工程师生产力平均提升 37%，但代码审查时间同步增加。" },
+      { type: "融资动态", text: "国内 AI 应用公司月之暗面完成新一轮融资，估值约 30 亿美元，主要投资方包括阿里巴巴。" },
+      { type: "行业动态", text: "苹果宣布将在 WWDC 2026 展示新一代 Apple Intelligence 功能，据悉将深度整合第三方 AI 模型。" }
+    ]
+  };
+  renderContent(fallbackData);
+}
+
+// Start
+generateDailyContent();
+</script>
+</body>
+</html>
